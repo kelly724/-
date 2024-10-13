@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品利润计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #e7f3fe;
+            border-radius: 4px;
+            text-align: left;
+            font-weight: bold;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>产品利润计算器</h1>
+        <div class="input-group">
+            <label for="weight">产品重量 (公斤):</label>
+            <input type="number" id="weight" value="200" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="purchasePrice">进货价 (元/公斤，含13%税):</label>
+            <input type="number" id="purchasePrice" value="9.65" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="sellingPrice">现金不含税售价 (元/公斤):</label>
+            <input type="number" id="sellingPrice" value="9.4" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="invoiceTax">开票税率 (%):</label>
+            <input type="number" id="invoiceTax" value="8" step="0.01">
+        </div>
+        <button onclick="calculateProfit()">计算利润</button>
+        <div id="result" class="result"></div>
+    </div>
+    <script>
+        function calculateProfit() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value);
+            const invoiceTax = parseFloat(document.getElementById('invoiceTax').value) / 100;
+            const actualTax = 0.13; // 实际需要缴纳的税率
+
+            // 计算总进货成本（含税）
+            const totalPurchaseCost = weight * purchasePrice;
+
+            // 计算进货成本（不含税）
+            const purchaseCostWithoutTax = totalPurchaseCost / (1 + actualTax);
+
+            // 计算开票售价
+            const invoiceSellingPrice = sellingPrice / (1 - invoiceTax);
+
+            // 计算实际含税售价
+            const actualSellingPrice = invoiceSellingPrice / (1 + actualTax);
+
+            // 计算总销售收入（含税）
+            const totalRevenue = weight * invoiceSellingPrice;
+
+            // 计算销售收入（不含税）
+            const revenueWithoutTax = weight * actualSellingPrice;
+
+            // 计算需要缴纳的总税额
+            const totalTax = totalRevenue - revenueWithoutTax;
+
+            // 计算利润
+            const profit = revenueWithoutTax - purchaseCostWithoutTax;
+
+            // 计算利润率
+            const profitMargin = (profit / revenueWithoutTax) * 100;
+
+            const resultText = `总进货成本（含税）: ¥${totalPurchaseCost.toFixed(2)}
+进货成本（不含税）: ¥${purchaseCostWithoutTax.toFixed(2)}
+开票售价（每公斤）: ¥${invoiceSellingPrice.toFixed(2)}
+实际含税售价（每公斤）: ¥${actualSellingPrice.toFixed(2)}
+总销售收入（含税）: ¥${totalRevenue.toFixed(2)}
+销售收入（不含税）: ¥${revenueWithoutTax.toFixed(2)}
+需缴纳总税额: ¥${totalTax.toFixed(2)}
+实际利润: ¥${profit.toFixed(2)}
+利润率: ${profitMargin.toFixed(2)}%`;
+
+            document.getElementById('result').innerText = resultText;
+        }
+    </script>
+</body>
+</html>
